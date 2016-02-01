@@ -101,7 +101,7 @@ class CRM_Contactdetailsplus_Form_Report_ContactDetailsPlus extends CRM_Report_F
         'fields' =>
         array(
           'notes' => array(
-            'title' => ts('List Notes'),
+            'title' => ts('Notes'),
             'default' => TRUE,
           ),
         ),
@@ -410,11 +410,14 @@ class CRM_Contactdetailsplus_Form_Report_ContactDetailsPlus extends CRM_Report_F
           if (CRM_Utils_Array::value('required', $field) ||
             CRM_Utils_Array::value($fieldName, $this->_params['fields'])
           ) {
+            // artfulrobot: Notes bit -------------------------
             if ($table['alias'] == 'note_civireport') {
               // If 'notes' is ticked, include two columns.
               $select[$table['alias']][] = "{$table['alias']}.subject as {$tableName}_subject";
               $select[$table['alias']][] = "{$table['alias']}.note as {$tableName}_note";
-              // Note the next one references entity_id as contact_id. The latter is who added the note, the former is who it belongs to (more intersesting).
+              // Note the next one references entity_id aliased as contact_id
+              // (which is expected later on). The latter is who added the
+              // note, the former is who it belongs to (more intersesting).
               $select[$table['alias']][] = "{$table['alias']}.entity_id as {$tableName}_contact_id";
               // I do not know what to set 'type' to, but from the other code it
               // looks like the key should be created.
@@ -521,14 +524,14 @@ class CRM_Contactdetailsplus_Form_Report_ContactDetailsPlus extends CRM_Report_F
                     ";
       }
 
-      // art: add notes
+      // artfulrobot: Notes bit -------------------------
       if (CRM_Utils_Array::value('note_civireport', $this->_selectComponent)) {
         $this->_formComponent['note_civireport'] = " FROM
               civicrm_contact  {$this->_aliases['civicrm_contact']}
               INNER JOIN  civicrm_note {$this->_aliases['civicrm_note']}
                      ON ({$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_note']}.entity_id AND
-      {$this->_aliases['civicrm_note']}.entity_table = 'civicrm_contact')
-                            {$group} ";
+                        {$this->_aliases['civicrm_note']}.entity_table = 'civicrm_contact')
+              {$group} ";
       }
 
       if (CRM_Utils_Array::value('membership_civireport', $this->_selectComponent)) {
@@ -916,7 +919,13 @@ class CRM_Contactdetailsplus_Form_Report_ContactDetailsPlus extends CRM_Report_F
             $entryFound = TRUE;
           }
 
+          // artfulrobot: Notes bit -------------------------
           if ($component == 'note_civireport') {
+            // Preserve line breaks nicely with <p> tags. Also add <p> to subject for nicer vertical alignment.
+            $componentRows[$contactID][$component][$rowNum]['civicrm_note_subject'] = "<p>$row[civicrm_note_subject]</p>";
+            $componentRows[$contactID][$component][$rowNum]['civicrm_note_note'] = '<p>'
+              . implode('</p><p>', preg_split('/\s*[\r\n]+\s*/', $row['civicrm_note_note']))
+              . '</p>';
             $entryFound = TRUE;
           }
 
