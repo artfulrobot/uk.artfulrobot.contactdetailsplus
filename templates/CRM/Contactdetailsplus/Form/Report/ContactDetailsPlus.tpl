@@ -23,11 +23,15 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+{* CSS to tame the size of the photo and expand the body of the notes field *}
 {literal}
 <style type="text/css">
   img.contact-report-plus__contact_photo {
     max-width:10rem;
     height:auto;
+  }
+  #crm-container .report-contents.crm-report_civicrm_note_note {
+    width:80%;
   }
 </style>
 {/literal}
@@ -81,7 +85,8 @@
         {foreach from=$rows item=row}
           {* If we have the contact's name then let's use that as a heading. Otherwise it's not
              very clear where one contact starts and the other ends. *}
-          {if $row.civicrm_contact_sort_name}<h1>{$row.civicrm_contact_sort_name}</h1>{/if}
+          {if $row.civicrm_contact_sort_name}<h1>{$row.civicrm_contact_sort_name}</h1>
+          {/if}
                   <table class="report-layout crm-report_contact_civireport">
                         {eval var=$sectionHeaderTemplate}
                             <tr>
@@ -133,6 +138,7 @@
                             </tr>
                         </table>
 
+                        {* Now the components *}
                         {if $columnHeadersComponent}
                             {assign var=componentContactId value=$row.contactID}
                             {foreach from=$columnHeadersComponent item=pheader key=component}

@@ -94,7 +94,7 @@ class CRM_Contactdetailsplus_Form_Report_ContactDetailsPlus extends CRM_Report_F
           array('title' => ts('Last Name, First Name'), 'default' => '1', 'default_weight' => '0', 'default_order' => 'ASC'),
         ),
       ),
-      // art :-------------------------
+      // artfulrobot: Notes bit -------------------------
       'civicrm_note' =>
       array(
         'dao' => 'CRM_Core_DAO_Note',
@@ -401,7 +401,7 @@ class CRM_Contactdetailsplus_Form_Report_ContactDetailsPlus extends CRM_Report_F
   function select() {
     $select = array();
     $this->_columnHeaders = array();
-    // art: add note_civireport to this list.
+    // artfulrobot: add note_civireport to this list.
     // Aliases are auto-created by appending _civireport to the table name.
     $this->_component = array('contribution_civireport', 'membership_civireport', 'participant_civireport', 'relationship_civireport', 'activity_civireport', 'note_civireport');
     foreach ($this->_columns as $tableName => $table) {
@@ -414,7 +414,8 @@ class CRM_Contactdetailsplus_Form_Report_ContactDetailsPlus extends CRM_Report_F
               // If 'notes' is ticked, include two columns.
               $select[$table['alias']][] = "{$table['alias']}.subject as {$tableName}_subject";
               $select[$table['alias']][] = "{$table['alias']}.note as {$tableName}_note";
-              $select[$table['alias']][] = "{$table['alias']}.contact_id as {$tableName}_contact_id";
+              // Note the next one references entity_id as contact_id. The latter is who added the note, the former is who it belongs to (more intersesting).
+              $select[$table['alias']][] = "{$table['alias']}.entity_id as {$tableName}_contact_id";
               // I do not know what to set 'type' to, but from the other code it
               // looks like the key should be created.
               $this->_columnHeadersComponent[$table['alias']]["{$tableName}_subject"]['type'] = '';
@@ -508,15 +509,6 @@ class CRM_Contactdetailsplus_Form_Report_ContactDetailsPlus extends CRM_Report_F
                    ON {$this->_aliases['civicrm_address']}.country_id = {$this->_aliases['civicrm_country']}.id AND
                       {$this->_aliases['civicrm_address']}.is_primary = 1 ";
     }
-    /*
-      if ($this->isTableSelected('civicrm_note')) {
-        $this->_from .= "
-              LEFT JOIN  civicrm_note {$this->_aliases['civicrm_note']}
-                     ON ({$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_note']}.entity_id AND
-                        {$this->_aliases['civicrm_note']}.entity_table = 'civicrm_contact') ";
-      }
-     */
-
     $this->_from .= "{$group}";
 
     foreach ($this->_component as $val) {
@@ -899,6 +891,9 @@ class CRM_Contactdetailsplus_Form_Report_ContactDetailsPlus extends CRM_Report_F
     }
   }
 
+  /**
+   * Alter the data for formatting purposes.
+   */
   function alterComponentDisplay(&$componentRows) {
     // custom code to alter rows
     $activityTypes = CRM_Core_PseudoConstant::activityType(TRUE, TRUE, FALSE, 'label', TRUE);
@@ -922,9 +917,6 @@ class CRM_Contactdetailsplus_Form_Report_ContactDetailsPlus extends CRM_Report_F
           }
 
           if ($component == 'note_civireport') {
-            // xxx @todo
-            $componentRows[$contactID][$component][$rowNum]['civicrm_note_subject'] = 'fred';
-            $componentRows[$contactID][$component][$rowNum]['civicrm_note_note'] = 'wilma';
             $entryFound = TRUE;
           }
 
