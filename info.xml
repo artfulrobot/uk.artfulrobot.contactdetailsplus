@@ -9,9 +9,9 @@
     <email>forums@artfulrobot.uk</email>
   </maintainer>
   <urls>
-    <url desc="Main Extension Page">http://artfulrobot.uk</url>
-    <url desc="Documentation">http://artfulrobot.uk</url>
-    <url desc="Support">http://artfulrobot.uk</url>
+    <url desc="Main Extension Page">https://github.com/artfulrobot/uk.artfulrobot.contactdetailsplus</url>
+    <url desc="Documentation">https://github.com/artfulrobot/uk.artfulrobot.contactdetailsplus</url>
+    <url desc="Support">https://github.com/artfulrobot/uk.artfulrobot.contactdetailsplus</url>
     <url desc="Licensing">http://www.gnu.org/licenses/agpl-3.0.html</url>
   </urls>
   <releaseDate>2016-01-28</releaseDate>
